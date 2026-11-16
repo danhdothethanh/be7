@@ -1,0 +1,57 @@
+@model List<MaSV_MyStore.Models.Order>
+@{
+    ViewBag.Title = "Đơn hàng của tôi";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<div class="container mt-4 mb-5">
+    <h2 class="mb-4">Lịch sử mua hàng</h2>
+
+    <!-- Tìm kiếm -->
+    <form method="get" class="row mb-3">
+        <div class="col-md-4">
+            <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Mã đơn hoặc tên SP..." />
+        </div>
+        <div class="col-md-3">
+            <select name="status" class="form-select">
+                <option value="All">Tất cả</option>
+                <option value="Pending" @(ViewBag.Status == "Pending" ? "selected" : "")>Chờ xử lý</option>
+                <option value="Processing" @(ViewBag.Status == "Processing" ? "selected" : "")>Đang xử lý</option>
+                <option value="Shipping" @(ViewBag.Status == "Shipping" ? "selected" : "")>Đang vận chuyển</option>
+                <option value="Delivered" @(ViewBag.Status == "Delivered" ? "selected" : "")>Đã giao</option>
+                <option value="Cancelled" @(ViewBag.Status == "Cancelled" ? "selected" : "")>Đã hủy</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Lọc</button>
+        </div>
+    </form>
+
+    @if (Model.Any())
+    {
+        foreach (var order in Model)
+        {
+            <div class="card mb-3 shadow-sm">
+                <div class="card-header d-flex justify-content-between">
+                    <span><strong>Đơn #@order.OrderID</strong> - @order.OrderDate.ToString("dd/MM/yyyy HH:mm")</span>
+                    <span class="badge bg-@(order.Status == "Delivered" ? "success" : order.Status == "Cancelled" ? "danger" : "warning")">@order.Status</span>
+                </div>
+                <div class="card-body">
+                    <p>Tổng tiền: <strong class="text-danger">@order.TotalAmount.ToString("N0") ₫</strong></p>
+                    <p>Thanh toán: @order.PaymentMethod | Giao hàng: @order.DeliveryMethod</p>
+                    <ul class="list-unstyled">
+                        @foreach (var d in order.OrderDetails)
+                        {
+                            <li>- @(d.Product?.ProductName) x @d.Quantity</li>
+                        }
+                    </ul>
+                    <a href="@Url.Action("OrderSuccess", new { id = order.OrderID })" class="btn btn-sm btn-outline-primary">Xem chi tiết</a>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-info">Bạn chưa có đơn hàng nào.</div>
+    }
+</div>

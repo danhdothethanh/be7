@@ -1,0 +1,76 @@
+@model MaSV_MyStore.Models.ViewModel.CheckoutVM
+@{
+    ViewBag.Title = "Thanh toán";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<div class="container mt-4 mb-5">
+    <h2 class="mb-4">Thanh toán đơn hàng</h2>
+
+    @using (Html.BeginForm("Checkout", "Order", FormMethod.Post, new { id = "checkoutForm" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Giao tới -->
+                <div class="card mb-3">
+                    <div class="card-header"><strong>Giao tới</strong></div>
+                    <div class="card-body">
+                        <p><strong>@Model.FullName</strong> | @Model.Phone</p>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.ShippingAddress)
+                            @Html.TextAreaFor(m => m.ShippingAddress, new { @class = "form-control", rows = 2, id = "shippingAddress" })
+                            @Html.ValidationMessageFor(m => m.ShippingAddress, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hình thức giao hàng -->
+                <div class="card mb-3">
+                    <div class="card-header"><strong>Hình thức giao hàng</strong></div>
+                    <div class="card-body">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="DeliveryMethod" value="Standard" id="std" checked />
+                            <label class="form-check-label" for="std">Giao hàng tiêu chuẩn (2-3 ngày)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="DeliveryMethod" value="Express" id="exp" />
+                            <label class="form-check-label" for="exp">Giao hàng nhanh (1 ngày)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hình thức thanh toán -->
+                <div class="card mb-3">
+                    <div class="card-header"><strong>Hình thức thanh toán</strong></div>
+                    <div class="card-body">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="PaymentMethod" value="COD" id="cod" checked />
+                            <label class="form-check-label" for="cod">Thanh toán khi nhận hàng (COD)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="PaymentMethod" value="BankTransfer" id="bank" />
+                            <label class="form-check-label" for="bank">Chuyển khoản ngân hàng</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="PaymentMethod" value="PayPal" id="paypal" />
+                            <label class="form-check-label" for="paypal">PayPal (Optional)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white"><strong>Đơn hàng</strong></div>
+                    <div class="card-body">
+                        <p class="fs-4 text-danger fw-bold">Tổng: @Model.TotalAmount.ToString("N0") ₫</p>
+                        <button type="submit" class="btn btn-success btn-lg w-100">Đặt hàng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
